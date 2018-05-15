@@ -1,0 +1,192 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.wsx</groupId>
+  <artifactId>oauth2-security</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>springbootTest</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+
+<!-- Inherit defaults from Spring Boot -->  
+<parent>  
+    <groupId>org.springframework.boot</groupId>  
+    <artifactId>spring-boot-starter-parent</artifactId>  
+    <version>1.5.9.RELEASE</version>  
+</parent>  
+  
+<!-- Add typical dependencies for a web application -->  
+<dependencies>  
+    <dependency>  
+        <groupId>org.springframework.boot</groupId>  
+        <artifactId>spring-boot-starter-web</artifactId>  
+    </dependency>  
+    
+    <dependency> 
+		<groupId>org.springframework.boot</groupId> 
+		<artifactId>spring-boot-starter-actuator</artifactId> 
+	</dependency> 
+	
+     <!-- security starter Poms --> 
+    <dependency> 
+	      <groupId>org.springframework.boot</groupId> 
+	      <artifactId>spring-boot-starter-security</artifactId> 
+    </dependency> 
+   
+    <!-- security taglibs --> 
+    <dependency> 
+	      <groupId>org.springframework.security</groupId> 
+	      <artifactId>spring-security-taglibs</artifactId> 
+	</dependency>
+	
+	<dependency>
+	    <groupId>org.springframework.security</groupId>
+	    <artifactId>spring-security-jwt</artifactId>
+	</dependency>
+	<dependency>
+	    <groupId>org.springframework.boot</groupId>
+	    <artifactId>spring-boot-starter-data-redis</artifactId>
+	</dependency>
+	 <dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-starter-thymeleaf</artifactId>
+	 </dependency>
+ 	 <!--Mybatis-->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>1.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.2.8</version>
+        </dependency>
+        <!--Mysql / DataSource-->
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <!--Json Support-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.1.43</version>
+        </dependency>
+
+<!-- 基于OAuth认证，导入 -->
+	<dependency> 
+		<groupId>org.springframework.security.oauth</groupId>
+		<artifactId>spring-security-oauth2</artifactId>
+	</dependency>
+	
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    
+    
+        <!--Json Support-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.1.43</version>
+        </dependency>
+    <!-- 支持 @ConfigurationProperties 注解 -->  
+     <dependency>  
+    <groupId>org.springframework.boot</groupId>  
+    <artifactId>spring-boot-configuration-processor</artifactId>  
+    <optional>true</optional>  
+	</dependency>  
+	
+	
+	<!-- 断路器监控 -->
+
+</dependencies>  
+
+<!-- 增加spring cloud eureka模块的依赖 -->
+<dependencyManagement>
+         <dependencies>
+             <dependency>
+                 <groupId>org.springframework.cloud</groupId>
+                 <artifactId>spring-cloud-dependencies</artifactId>
+                 <version>Edgware.RELEASE</version>
+                 <type>pom</type>
+                 <scope>import</scope>
+             </dependency>
+         </dependencies>
+</dependencyManagement>
+  
+<!-- Package as an executable JAR -->  
+<build>  
+    <plugins>  
+        <plugin>  
+            <groupId>org.springframework.boot</groupId>  
+            <artifactId>spring-boot-maven-plugin</artifactId>  
+        </plugin>  
+        
+        <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <dependencies> 
+                       <!--springloaded  hotdeploy --> 
+                       <dependency> 
+                           <groupId>org.springframework</groupId> 
+                           <artifactId>springloaded</artifactId> 
+                           <version>1.2.4.RELEASE</version>
+                       </dependency> 
+                    </dependencies> 
+                    <executions> 
+                       <execution> 
+                           <goals> 
+                              <goal>repackage</goal> 
+                           </goals> 
+                           <configuration> 
+                              <classifier>exec</classifier> 
+                           </configuration> 
+                       </execution> 
+                    </executions>
+</plugin>
+        
+    </plugins>  
+</build>  
+  
+<!-- Allow access to Spring milestones and snapshots -->  
+<!-- (you don't need this if you are using anything after 0.5.0.RELEASE) -->  
+<repositories>  
+    <repository>  
+        <id>spring-snapshots</id>  
+        <url>http://repo.spring.io/snapshot</url>  
+        <snapshots><enabled>true</enabled></snapshots>  
+    </repository>  
+    <repository>  
+        <id>spring-milestones</id>  
+        <url>http://repo.spring.io/milestone</url>  
+        <snapshots><enabled>true</enabled></snapshots>  
+    </repository>  
+</repositories>  
+<pluginRepositories>  
+    <pluginRepository>  
+        <id>spring-snapshots</id>  
+        <url>http://repo.spring.io/snapshot</url>  
+    </pluginRepository>  
+    <pluginRepository>  
+        <id>spring-milestones</id>  
+        <url>http://repo.spring.io/milestone</url>  
+    </pluginRepository>  
+</pluginRepositories>  
+
+</project>

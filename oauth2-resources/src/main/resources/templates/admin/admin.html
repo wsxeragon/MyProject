@@ -1,0 +1,35 @@
+<!DOCTYPE html>  
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"  
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">  
+    <head>  
+        <title>Hello World!</title>  
+    </head>  
+    <body>  
+        <h1 th:inline="text">Hello.v.2</h1>  
+        <p th:text="${msg}"></p>  
+        <p th:text="'say：'+${msg}"></p>  <!-- 设置文本内容 -->
+        <a th:href="@{hello.html}" >hello1</a><!-- 设置href属性 -->
+        <div th:with="num=100"><!--th:with定义变量 并且只能在这标签包含的范围内使用  -->
+        	<span th:text="${num}+'是否为偶数：' "></span> <!-- 拼接字符串 -->
+        	<span th:text="${num} %2==0 "></span> 
+        	<p th:text="${num}%2==0? '偶数' :'奇数'"></p><!-- 三元运算 -->
+        	<p th:if="${num} &gt; 1">123</p><!-- 只有if值为ture 才解析此标签，否则不解析 < > 必须用转移词 -->
+        	<p th:if="${num} &gt; 101">345</p>
+        	<p th:unless="${num} &gt; 1">123</p><!-- 只有if值为false 才解析此标签，否则不解析 -->
+        	<p th:unless="${num} &gt; 101">345</p>
+        	
+        	<div th:with="role0='guest',class0='myDiv'"> <!-- 可以同时定义多个局部变量 -->
+        		<!-- 可以多个一起使用 -->
+	        	<a th:href="@{#}" th:text="请注册"  th:if="${role0}=='guest'"></a>
+	        	
+	        	<!-- switch case -->
+	        	<div th:switch="${role0}"  th:class="${class0}"><!-- 设置 class属性 -->
+	        		<p th:case="guest">GUEST</p>
+	        		<p th:case="admin">欢迎</p>
+        		</div>
+        	</div>
+        	
+        	
+        </div>
+    </body>  
+</html> 

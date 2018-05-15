@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+    <head>
+        <title>Spring Security Example </title>
+    </head>
+    <body>
+        <div th:if="${param.error}">
+        用户名或密码错误
+        </div>
+        <div th:if="${param.logout}">
+            您已注销成功
+        </div>
+          <div th:if="${param.expired}">
+            请重新登陆
+        </div>
+        <form>
+            <div><label> 用户名 : <input type="text" id="username"/> </label></div>
+            <div><label> 密  码 : <input type="password" id="password"/> </label></div>
+            <div><input id="sub" type="button" value="登录"/></div>
+        </form>
+        
+        <form id="from1" method="post" th:action="@{/login}" style="display:none">
+            <div><label> 用户名 : <input type="text"  name="myusername"/> </label></div>
+            <div><label> 密  码 : <input type="password" name="mypassword"/> </label></div>
+        </form>
+        
+        <script src="http://code.jquery.com/jquery-latest.js"></script>
+        <script type="text/javascript">
+        $("#sub").on("click",function(){
+        	$("input[name=myusername]").val($("#username").val());
+        	$("input[name=mypassword]").val($("#password").val()+"="+(new Date()).getTime());
+        	$("#from1").submit();
+        });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,35 @@
+server:  
+  port: 9081
+  context-path: /client
+
+#logging:
+#  level:
+#    org.springframework: DEBUG
+
+    
+spring: 
+  thymeleaf:  
+    cache:  false 
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/test
+    username: root
+    password: 
+  application: 
+    name: hello-service
+
+
+security: 
+  oauth2: 
+    client: 
+      clientId: client  
+      clientSecret: 123456  
+      accessTokenUri: http://localhost:9093/server/oauth/token 
+      userAuthorizationUri: http://localhost:9093/server/oauth/authorize 
+#      tokenName: oauth_token
+#      authenticationScheme: query
+#      clientAuthenticationScheme: form  
+    resource: 
+      userInfoUri: http://localhost:9083/resource/auth/me  
+  
+  

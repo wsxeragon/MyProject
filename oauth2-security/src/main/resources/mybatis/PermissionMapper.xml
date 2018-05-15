@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wsx.springbootTest.dao.PermissionDao">
+
+	<resultMap type="com.wsx.springbootTest.domain.SysUser" id="userWithPermisson">
+		<id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+         <result property="phone" column="phone"/>
+        <collection property="permissions" ofType="com.wsx.springbootTest.domain.SysPermission">
+        	<result column="name" property="name"/>
+        	<result column="descripion" property="descripion"/>
+        	<result column="url" property="url"/>
+        	<result column="pid" property="pid"/>
+        </collection>
+	</resultMap>
+ 
+ <select id="findByUsername" parameterType="String" resultMap="userWithPermisson">
+ 		SELECT 
+			a.*,e.*
+		FROM
+			sys_user a
+		RIGHT JOIN sys_role_user b ON b.sys_user_id = a.id
+		RIGHT JOIN sys_role c ON c.id = b.sys_role_id
+		RIGHT JOIN sys_role_permission d ON d.sys_role_id = c.id
+		RIGHT JOIN sys_permission e ON e.id = d.sys_permission_id
+		WHERE
+			a.username = #{username}
+ </select>
+ 
+ <select id="findAll" resultType="com.wsx.springbootTest.domain.SysPermission">
+ 		select * from sys_permission
+ </select>
+
+    
+    
+ 
+</mapper>
