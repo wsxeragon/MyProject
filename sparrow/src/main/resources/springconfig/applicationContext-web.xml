@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.3.xsd  
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-4.3.xsd  
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd  
+        http://www.springframework.org/schema/util 
+        http://www.springframework.org/schema/util/spring-util-4.3.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<!-- 扫描WEB包,应用spring的注解,此处base-package需修改为自己基础包， 如果有引入和排除的过滤可以增加context:include-filter和context:exclude-filter配置。 -->
+	<context:component-scan base-package="com.inphase.sparrow" />
+	
+	<!-- 开启AOP自动代理功能 -->
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+
+	<!-- 启用注解驱动的Spring MVC -->
+	<mvc:annotation-driven></mvc:annotation-driven>
+
+	<!-- 默认的静态资源处理Servlet处理静态资源,在web.xml中增加对静态资源的处理 -->
+	<mvc:default-servlet-handler />
+
+	<!-- 配置视图解析器,将ModelAndView及字符串解析的具体页面 -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	
+	<!-- SpringMVC上传文件时，需要配置MultipartResolver处理器 -->  
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">  
+        <property name="defaultEncoding" value="UTF-8"/>  
+        <!-- 指定所上传文件的总大小。注意maxUploadSize属性的限制不是针对单个文件，而是所有文件的容量之和 -->  
+        <property name="maxUploadSize" value="5000000"/>  
+    </bean>  
+      
+    <!-- SpringMVC在超出上传文件限制时，会抛出org.springframework.web.multipart.MaxUploadSizeExceededException -->  
+    <!-- 该异常是SpringMVC在检查上传的文件信息时抛出来的，而且此时还没有进入到Controller方法中 -->  
+    <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">  
+        <property name="exceptionMappings">  
+            <props>  
+                <!-- 遇到MaxUploadSizeExceededException异常时，自动跳转到/WEB-INF/error/error_fileupload.jsp页面 -->  
+                <prop key="org.springframework.web.multipart.MaxUploadSizeExceededException">error/500</prop>  
+            </props>  
+        </property>  
+    </bean> 
+    
+	<!-- 自定义拦截器 -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<mvc:exclude-mapping path="/login"/>
+			<mvc:exclude-mapping path="/logout"/> 
+			<mvc:exclude-mapping path="/logingo"/>
+			<bean class="com.inphase.sparrow.base.AuthIntercepter"/>
+		</mvc:interceptor>
+		<mvc:interceptor>  
+	        <mvc:mapping path="/**"/>  
+	        <bean class="com.inphase.sparrow.base.XSSInterceptor"/>  
+    	</mvc:interceptor>  
+	</mvc:interceptors>
+	
+</beans>

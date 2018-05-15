@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的 
+	例如namespace="me.gacl.mapping.userMapper"就是me.gacl.mapping(包名)+userMapper(userMapper.xml文件去除后缀) -->
+<mapper namespace="com.inphase.sparrow.dao.system.RoleDaoWithMyBatis">
+	<!-- 在select标签中编写查询的SQL语句， 设置select标签的id属性为getUser，id属性值必须是唯一的，不能够重复, 使用parameterType属性指明查询时使用的参数类型，resultType属性指明查询返回的结果集类型 
+		resultType="com.hua.saf.User"就表示将查询结果封装成一个User类的对象返回,User类就是t_user表所对应的实体类 -->
+	<!-- 根据id查询得到一个role对象 -->
+	<select id="getRole" parameterType="long" resultMap="roleMap">
+		SELECT
+		role_id,role_name,IFNULL(role_description,'')
+		role_description,role_isprivate FROM s_role WHERE role_id=#{roleId}
+	</select>
+	
+	<!-- 获取角色分页数据 -->
+	<select id="listRolePage" resultMap="roleMap" parameterType="com.inphase.sparrow.entity.TableParam">
+		SELECT
+		role_id,role_name,IFNULL(role_description,'')
+		role_description,role_isprivate FROM s_role
+		<if test="searchCondition.roleName !=null and searchCondition.roleName != '' ">
+			WHERE role_name LIKE CONCAT('%',#{searchCondition.roleName},'%')
+		</if>
+		<choose>
+		    <when test="iSortCol_0 == 1">
+		      ORDER BY role_name ${sSortDir_0}
+		    </when>
+		    <otherwise>
+		      ORDER BY role_id desc
+		    </otherwise>
+		 </choose>
+		<!-- LIMIT #{iDisplayStart},#{iDisplayLength} -->
+	</select>
+	
+	<select id="listAllRole" resultMap="roleMap">
+		SELECT a.`role_id`,`role_name`,`role_description`,`role_isprivate`, IFNULL(role_selected,0) role_selected 
+		FROM `s_role` a LEFT JOIN (SELECT b.`role_id`, 1 role_selected FROM `s_role` b 
+		INNER JOIN `s_functionoperator` c ON b.`role_id`=c.`role_id` WHERE c.`oper_id`=#{operId}) tmp
+		ON a.`role_id` = tmp.role_id
+	</select>
+	
+	<!-- 获取查询总数 -->
+	<select id="getExistsOperator" resultType="java.lang.Integer" parameterType="java.lang.Long">
+		SELECT COUNT(*) FROM s_functionoperator WHERE role_id=#{roleId}
+	</select>
+	
+	<!-- 实体类与数据库数据对应关系 -->
+	<resultMap id="roleMap" type="com.inphase.sparrow.entity.system.Role">
+		<id property="roleId" column="role_id" />
+		<result property="roleName" column="role_name" />
+		<result property="roleDescription" column="role_description" />
+		<result property="roleIsprivate" column="role_isprivate" />
+		<result property="roleSelected" column="role_selected" />
+	</resultMap>
+	
+	<!-- 保存一个角色数据 -->
+	<insert id="saveRole" useGeneratedKeys="true" keyProperty="roleId"
+		parameterType="com.inphase.sparrow.entity.system.Role">
+		Insert into `s_role`(role_name,role_description,role_isprivate)
+		values(#{roleName},#{roleDescription},#{roleIsprivate})
+	</insert>
+	
+	<!-- 修改一个角色数据 -->
+	<update id="updateRole">
+		UPDATE `s_role` SET `role_name` = #{roleName},
+			   `role_description` = #{roleDescription},
+			   `role_isprivate` = #{roleIsprivate}
+			    WHERE `role_id` = #{roleId}
+	</update>
+	
+	<!-- 删除一个角色数据 -->
+	<delete id="removeRole">
+		DELETE FROM `s_role` WHERE `role_id` = #{roleId}
+	</delete>
+	
+	<!-- 删除角色权限关联 -->
+	<delete id="removeRoleFunctionItemMap">
+		DELETE FROM `s_functionmap` WHERE `role_id` = #{roleId}
+	</delete>
+	
+	<!-- 保存角色权限关联数据 -->
+	<insert id="saveRoleFunctionMap">
+		INSERT INTO `s_functionmap` (`role_id`, `funn_id`) VALUES
+		<!-- 当collection为List的时候，index是当前迭代的次数，item是当前迭代获取的元素
+		   	   当collection为Map的时候 ，index是map的key，item是map的value--> 
+		<foreach collection="list" index="index" item="item" separator=",">
+			(#{item.roleId}, #{item.functionId})
+		</foreach>
+	</insert>
+	
+</mapper>
