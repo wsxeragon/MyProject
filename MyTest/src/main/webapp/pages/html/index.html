@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <link rel="stylesheet" href="//cdn.bootcss.com/weui/1.1.1/style/weui.min.css">
+   <link rel="stylesheet" href="//cdn.bootcss.com/jquery-weui/1.0.1/css/jquery-weui.min.css">
+    <title></title>
+    
+
+</head>
+<body>
+	 <h1>微信JS</h1>
+	<a id="auth" href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx0060a2a9163d1249&redirect_uri=http%3a%2f%2f10.206.14.126%3a8081%2fTest%2fhtml%2findex.html&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect">
+		跳转授权
+	</a>
+	<div id="info" hidden="hidden">
+		<h3 >
+			头像：
+		</h3>
+		<img id="headImage"  src=""/>
+		<h3 >
+			昵称：
+		</h3>
+		<span id="nickname">
+			
+		</span>
+		<h3 id="">
+			性别：
+		</h3>
+		<span id="sex">
+			
+		</span>
+	</div>
+	<br/>
+	<input type="button" class="weui-btn weui-btn_mini weui-btn_primary" id="getPic" value="选择图片" />
+	<span id="pics"></span>
+	<br/>
+	<input type="button" class="weui-btn weui-btn_mini weui-btn_primary" id="startRecord" value="开始录音" />
+	<input type="button" class="weui-btn weui-btn_mini weui_btn_default" id="stopRecord" value="停止录音" disabled="disabled"/>
+	<br/>
+	<input type="button" class="weui-btn weui-btn_mini weui_btn_default" id="startPlay" value="开始播放" disabled="disabled"/>
+	<input type="button" class="weui-btn weui-btn_mini weui_btn_default" id="pausePlay" value="暂停播放" disabled="disabled"/>
+	<input type="button" class="weui-btn weui-btn_mini weui_btn_default" id="stopPlay" value="停止播放" disabled="disabled"/>
+	<div class="weui-tabbar">
+                <a href="javascript:;" class="weui-tabbar__item">
+                    <span style="display: inline-block;position: relative;">
+                        <img src="../images/icon_nav_nav.png" alt="" class="weui-tabbar__icon">
+                        <span class="weui-badge" style="position: absolute;top: -2px;right: -13px;">8</span>
+                    </span>
+                    <p class="weui-tabbar__label" >微信</p>
+                </a>
+                <a href="javascript:;" class="weui-tabbar__item">
+                    <img src="../images/icon_nav_layout.png" alt="" class="weui-tabbar__icon">
+                    <p class="weui-tabbar__label">通讯录</p>
+                </a>
+                <a href="javascript:;" class="weui-tabbar__item">
+                    <span style="display: inline-block;position: relative;">
+                        <img src="../images/icon_nav_search.png" alt="" class="weui-tabbar__icon">
+                        <span class="weui-badge weui-badge_dot" style="position: absolute;top: 0;right: -6px;"></span>
+                    </span>
+                    <p class="weui-tabbar__label">发现</p>
+                </a>
+                <a href="javascript:;" class="weui-tabbar__item weui-bar__item_on">
+                    <img src="../images/icon_nav_form.png" alt="" class="weui-tabbar__icon">
+                    <p class="weui-tabbar__label">我</p>
+                </a>
+     </div>
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+<script src="../js/jquery/jquery-2.2.4.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/jquery/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js" type="text/javascript" charset="utf-8"></script>
+<script src="//cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/jquery-weui/1.0.1/js/jquery-weui.min.js"></script>
+<script src="//cdn.bootcss.com/jquery-weui/1.0.1/js/swiper.min.js"></script>
+<script src="//cdn.bootcss.com/jquery-weui/1.0.1/js/city-picker.min.js"></script>
+<script type="text/javascript">
+var code = getUrlParam("code");
+var access_token ="";
+var openid="";
+//可使用网页工具生成
+wx.config({
+    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+    appId: 'wx0060a2a9163d1249', // 必填，公众号的唯一标识
+    timestamp: 1496289145, // 必填，生成签名的时间戳
+    nonceStr: '123123', // 必填，生成签名的随机串
+    signature: 'd9ff9594ebcd46f0b3599c778401c13b6300d427',// 必填，签名，见附录1
+    jsApiList: ["chooseImage","startRecord","stopRecord","playVoice","pauseVoice","stopVoice"] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+});
+
+$(function(){ 
+		if(code !=null && code !="")
+		{
+			$("#auth").hide();
+			if(($.cookie('access_token')==null || $.cookie('access_token')=="")&&($.cookie('openid')==null || $.cookie('openid')==""))
+			{
+				$.ajax({
+					"type" : "POST",
+					"dataType" : "json",
+					"data":{"code":code},
+					"url" : "../wechat/getJSAccessToken.do",
+					"success" : function(data) {
+						if(data.status==200)
+						{
+							access_token = data.respbody.access_token;
+							openid = data.respbody.openid;
+							$("#info").show();
+						}
+					}	
+	    	  });
+			}else
+			{
+				access_token=$.cookie('access_token');
+				openid = $.cookie('openid')
+				$("#info").show();
+			}
+			getInfo();
+		}
+		 var localIds=[];
+		$("#getPic").on("click",function(){
+			var html="<br/>";
+			wx.chooseImage({
+			    count: 9 , // 默认9
+			    sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+			    sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+			    success: function (res) {
+			         localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+			       for(var i=0;i<localIds.length;i++)
+			    	   {
+			    	   html +="<img style='width:400px'  src='"+localIds[i]+"'>"
+			    	   }
+			        alert(html);
+			        $("#pics").append(html);
+			    }
+			});
+		})
+		
+	var voiceid="";
+	$("#startRecord").on("click",function(){
+		wx.startRecord();
+		disabled($("#startRecord"));
+		disabled($("#startPlay"));
+		disabled($("#pausePlay"));
+		disabled($("#stopPlay"));
+		enabled($("#stopRecord"));
+	})
+		
+	$("#stopRecord").on("click",function(){
+		wx.stopRecord({
+		    success: function (res) {
+		         voiceid = res.localId;
+		         disabled($("#stopRecord"));
+		 		enabled($("#startRecord"));
+		 		enabled($("#startPlay"));
+		 		disabled($("#pausePlay"));
+				disabled($("#stopPlay"));
+		    }
+		});
+	})
+	
+		$("#startPlay").on("click",function(){
+			wx.playVoice({
+			    localId: voiceid // 需要播放的音频的本地ID，由stopRecord接口获得
+			});
+			 disabled($("#startRecord"));
+			 disabled($("#stopRecord"));
+			 disabled($("#startPlay"));
+			 enabled($("#pausePlay"));
+		 	enabled($("#stopPlay"));
+	  })
+		
+	$("#pausePlay").on("click",function(){
+			wx.pauseVoice({
+			    localId: voiceid // 需要播放的音频的本地ID，由stopRecord接口获得
+			});
+			disabled($("#startRecord"));
+			 disabled($("#stopRecord"));
+			 enabled($("#startPlay"));
+			 disabled($("#pausePlay"));
+			 enabled($("#stopPlay"));
+	  })
+	  
+	  $("#stopPlay").on("click",function(){
+		  wx.stopVoice({
+			    localId: voiceid // 需要播放的音频的本地ID，由stopRecord接口获得
+			});
+		  enabled($("#startRecord"));
+		  disabled($("#stopRecord"));
+		  enabled($("#startPlay"));
+		  disabled($("#pausePlay"));
+		  disabled($("#stopPlay"));
+	  })
+	  
+	  
+});
+
+function disabled(a){
+	 a.attr("disabled","disabled");
+		a.attr("class","weui-btn weui-btn_mini weui-weui_btn_default");
+}
+
+function enabled(a){
+	 a.attr("class","weui-btn weui-btn_mini weui-btn_primary");
+		a.removeAttr("disabled");
+}
+
+function getUrlParam(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+    var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+    if (r != null) return unescape(r[2]); return null; //返回参数值
+}
+	
+function getInfo(){
+	$.ajax({
+		"type" : "POST",
+		"dataType" : "json",
+		"data":{"access_token":access_token,"openid":openid},
+		"url" : "../wechat/getJsUserInfo.do",
+		"success" : function(data) {
+			$("#nickname").text(data.respbody.nickname);
+			$("#sex").text(data.respbody.sex==1?"男":"女");
+			$("#headImage").attr("src",data.respbody.headimgurl);
+			$("#headImage").css("width","200px");
+		}	
+  });
+}
+	
+
+</script>
+	
+</body>
+
+</html>

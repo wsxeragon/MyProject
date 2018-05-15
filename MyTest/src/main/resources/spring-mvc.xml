@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:task="http://www.springframework.org/schema/task" 
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:websocket="http://www.springframework.org/schema/websocket"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+        http://www.springframework.org/schema/task
+		http://www.springframework.org/schema/task/spring-task-3.1.xsd
+		http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/websocket
+        http://www.springframework.org/schema/websocket/spring-websocket-4.3.xsd">
+                        
+       <!-- 静态资源 webapp文件夹下 -->                 
+      <mvc:resources mapping="/js/**" location="/pages/js/" />
+	 <mvc:resources mapping="/css/**" location="/pages/css/" />
+	 <mvc:resources mapping="/images/**" location="/pages/images/" />
+	 <mvc:resources mapping="/html/**" location="/pages/html/" />
+                        
+                        
+    <!-- 自动扫描该包，使SpringMVC认为包下用了@controller注解的类是控制器 -->  
+    <context:component-scan base-package="cn.inphase.control" />  
+    <context:component-scan base-package="cn.inphase.service" /> 
+      <!-- 引入jdbc配置文件 -->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath*:JDBC.properties</value>
+            </list>
+        </property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+    </bean> 
+    <mvc:annotation-driven/>
+    
+       <!-- 引入测试配置文件 -->
+    <bean id="propertyConfigurer1" class="cn.inphase.tool.MyPropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath*:application.properties</value>
+            </list>
+        </property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+    </bean> 
+    
+
+    <!-- 定义跳转的文件的前后缀 ，视图模式配置-->  
+<!--     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">  
+        这里的配置我的理解是自动给后面action的方法return的字符串加上前缀和后缀，变成一个 可用的url地址  
+        <property name="prefix" value="/WEB-INF/pages/" />  
+        <property name="suffix" value=".jsp" />  
+    </bean>   -->
+      
+    <!-- 配置文件上传，如果没有使用文件上传可以不用配置，当然如果不配，那么配置文件中也不必引入上传组件包 -->  
+    <bean id="multipartResolver"    
+        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">    
+        <!-- 默认编码 -->  
+        <property name="defaultEncoding" value="utf-8" />    
+        <!-- 文件大小最大值 -->  
+        <property name="maxUploadSize" value="10485760000" />    
+        <!-- 内存中的最大值 -->  
+        <property name="maxInMemorySize" value="40960" />    
+    </bean>   
+  
+<!-- 配置多数据源时，防止同一个mapper被多个MapperScannerConfigurer扫描到 -->
+<import resource="classpath:dataSource.xml" />
+<import resource="classpath*:redis.xml" />
+
+<aop:aspectj-autoproxy proxy-target-class="true" />
+   <aop:config>
+        <aop:advisor advice-ref="druid-stat-interceptor"
+            pointcut-ref="druid-stat-pointcut" />
+    </aop:config>
+
+<!-- <bean class="cn.inphase.control.AspectHander" /> -->
+
+<!-- 视图模式配置,velocity配置文件-->
+<bean id="velocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">  
+    <property name="resourceLoaderPath" value="/WEB-INF/vm" />  
+    <property name="configLocation" value="classpath:velocity.properties" />  
+</bean>  
+
+<!-- 配置视图的显示  VelocityViewResolver 不使用layout功能   VelocityLayoutViewResolver使用layout功能-->  
+    <bean id="ViewResolver" class="org.springframework.web.servlet.view.velocity.VelocityLayoutViewResolver">  
+        <property name="cache" value="true" />  
+        <property name="prefix" value="/" /><!-- 视图文件的前缀，即存放的路径 -->  
+        <property name="suffix" value=".vm" /><!-- 视图文件的后缀名 -->  
+        <!--<property name="toolboxConfigLocation" value="/WEB-INF/tools.xml" /><!–toolbox配置文件路径–>-->  
+        <property name="dateToolAttribute" value="date" /><!--日期函数名称-->  
+        <property name="numberToolAttribute" value="number" /><!--数字函数名称-->  
+        <property name="contentType" value="text/html;charset=UTF-8" />  
+        <property name="layoutUrl" value="layout/layout.vm" />  
+        <property name="exposeSpringMacroHelpers" value="true" /><!--是否使用spring对宏定义的支持-->  
+        <property name="exposeRequestAttributes" value="true" /><!--是否开放request属性-->  
+        <property name="requestContextAttribute" value="rc"/><!--request属性引用名称-->  
+    </bean> 
+    
+    
+    
+    <bean id="websocket" class="cn.inphase.service.MyTextWebSocketHandler"/>  
+  
+	<websocket:handlers>  
+	    <websocket:mapping path="/websocket" handler="websocket"/>  
+	    <websocket:handshake-interceptors>  
+	    <bean class="cn.inphase.service.HandshakeInterceptor"/>  
+	    </websocket:handshake-interceptors>  
+	</websocket:handlers> 
+	
+	
+	<bean id="friend" class="cn.inphase.domain.Person" scope="prototype"></bean>	
+	
+	<bean id="peter" class="cn.inphase.domain.Peter" scope="singleton">
+			<lookup-method name="getFriend" bean="friend"/>
+	</bean>
+	
+	
+	<bean id="personRequest" class="cn.inphase.domain.Person" scope="request">
+	<aop:scoped-proxy/>
+	</bean>
+	
+	<bean class="cn.inphase.service.BeanPostPrcessorImpl"></bean>
+	
+	
+	<bean class="cn.inphase.service.BeanFactoryPostPrcessorImpl"></bean>
+	
+	
+	<bean id="person0" class="cn.inphase.domain.Person" >
+		<property name="name" value="wqqqq"/>
+		<property name="age" value="222"/>
+	</bean>
+	
+<bean name="/test.hessian" class="org.springframework.remoting.caucho.HessianServiceExporter">
+	<!-- 指向服务实现类 -->
+    <property name="service" ref="service_api"/>
+    <!-- 指向服务接口 -->
+    <property name="serviceInterface" value="cn.inphase.service.ServiceApi"/>
+</bean>
+
+</beans>  
+
+

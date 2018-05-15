@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<student>
+    <age0>19</age0>
+    <gender>1</gender>
+    <name>tom</name>
+    <subjects>
+        <subject>微积分</subject>
+        <subject>大物</subject>
+        <subject>模电</subject>
+    </subjects>
+</student>
+

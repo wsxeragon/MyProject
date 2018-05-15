@@ -1,0 +1,25 @@
+#set($page_title="自定义样式页面")  
+#set($layout="/layout/layout.vm")  
+#set($name="tom") 
+<div>  
+    <p>设置某页面不使用 velocity配置默认的layout.vm模板,好处:不会加载默认样式,可以自定义</p>  
+    <h3>name is ${name}</h3>
+    <table >
+        #foreach($str in $list)
+            <tr >
+                <td >$str</td>
+                #if($velocityCount %2 ==0)
+                <td >$velocityCount</td>
+                #else
+                #end
+            </tr>
+        #end
+    </table>
+</div> 
+<script src="../../js/jquery/jquery-2.2.4.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/jquery/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+$(function(){
+alert($("h3").text());
+})
+</script>

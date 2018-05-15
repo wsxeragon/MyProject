@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:task="http://www.springframework.org/schema/task" 
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+        http://www.springframework.org/schema/task
+		http://www.springframework.org/schema/task/spring-task-3.1.xsd
+		http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+                        
+       <!-- 静态资源 webapp文件夹下 -->                 
+      <mvc:resources mapping="/js/**" location="/pages/js/" />
+	 <mvc:resources mapping="/css/**" location="/pages/css/" />
+	 <mvc:resources mapping="/images/**" location="/pages/images/" />
+	 <mvc:resources mapping="/html/**" location="/pages/html/" />
+               
+                        
+    <!-- 自动扫描该包，使SpringMVC认为包下用了@controller注解的类是控制器 -->  
+    <context:component-scan base-package="com.wsx.test.*" />   
+      <!-- 引入jdbc配置文件 -->
+    <bean id="propertyConfigurer" class="com.wsx.test.tool.MyPropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath*:JDBC.properties</value>
+            </list>
+        </property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+    </bean> 
+    
+    
+    <mvc:annotation-driven/>
+    
+    
+  
+  
+    
+  
+<!-- 配置多数据源时，防止同一个mapper被多个MapperScannerConfigurer扫描到 -->
+<!-- <import resource="classpath*:dataSource.xml" />引入失败， 不到此文件
+ -->
+ <bean id="dataSource0" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName">
+			<value>${jdbc.driverclass}</value>
+		</property>
+		<property name="url">
+			<value>${jdbc.url}</value>
+		</property>
+		<property name="username">
+			<value>${jdbc.username}</value>
+		</property>
+		<property name="password">
+			<value>${jdbc.password}</value>
+		</property>
+	</bean>  
+	
+	 
+  
+  
+    <bean id="dynamicdatasource" class="com.wsx.test.tool.DynamicDataSource">  
+        <property name="targetDataSources">  
+            <map key-type="java.lang.String">  
+                 <entry key="defaultDataSource" value-ref="dataSource0" />   
+            </map>  
+        </property>  
+        <property name="defaultTargetDataSource" ref="dataSource0" />  
+    </bean>  
+		
+		
+	<!-- 事务管理 -->
+<!-- <bean id="tx" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+<property name="dataSource" ref="dynamicdatasource"></property>
+</bean>
+	
+<bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+<property name="mapperLocations" value="classpath:mybatis1/*.xml" />
+ <property name="dataSource" ref="dynamicdatasource"></property>
+ 自动扫描实体类，产生别名
+ <property name="typeAliasesPackage" value="com.wsx.test.domain"></property>
+</bean>
+
+
+
+
+<bean name="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+扫描mybatis的mapper接口和mapper.xml
+<property name="basePackage" value="com.wsx.test.dao"></property>
+ <property name="sqlSessionFactory" ref="sqlSessionFactoryBean"></property> 
+<property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryBean" /> 
+</bean>
+
+
+
+使用声明式事务，引用上面定义的tx
+<tx:annotation-driven transaction-manager="tx"/>
+ -->
+
+<aop:aspectj-autoproxy proxy-target-class="true" />
+<bean class="com.wsx.test.controller.AspectHander" />
+
+
+<bean id="p1" class="com.wsx.test.domain.Person2" >
+	<constructor-arg index="0" value="1111"/>
+	<constructor-arg index="1" value="qqqq"/>
+	<constructor-arg index="2" value="11"/>
+</bean>
+
+</beans>  
+
+

@@ -1,0 +1,97 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+    <title>WebSocket/SockJS Echo Sample (Adapted from Tomcat's echo sample)</title>  
+    <textarea id="text" style="height: 500px;width: 300px;"></textarea>
+    <br>
+    <input id="ipTo" type="text" placeholder="必须输入对方ip地址" /> <input id="msg" type="text" /> <button id="btn2">发送</button>
+    <br>
+    <button id="btn1">建立连接</button>
+    <button id="btn3">关闭连接</button>
+    
+    <script src="//cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+    <script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>  
+  
+    <script type="text/javascript">
+  //申请一个WebSocket对象
+    var websocket=null;
+  function dateFtt(fmt,date)   
+{ //author: meizz   
+  var o = {   
+    "M+" : date.getMonth()+1,                 //月份   
+    "d+" : date.getDate(),                    //日   
+    "h+" : date.getHours(),                   //小时   
+    "m+" : date.getMinutes(),                 //分   
+    "s+" : date.getSeconds(),                 //秒   
+    "q+" : Math.floor((date.getMonth()+3)/3), //季度   
+    "S"  : date.getMilliseconds()             //毫秒   
+  };   
+  if(/(y+)/.test(fmt))   
+    fmt=fmt.replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));   
+  for(var k in o)   
+    if(new RegExp("("+ k +")").test(fmt))   
+  fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));   
+  return fmt;   
+} 
+    
+    $("#btn1").on("click",function(){
+    	var prefix = "ws://"+window.location.host;
+    	var wsUri =prefix+"/Test/websocket";
+    	websocket = new WebSocket(wsUri);
+        //当Browser和WebSocketServer连接成功后
+        websocket.onopen = function(evt) {
+        	alert("建立连接");
+        };
+        
+        //当Browser接收到WebSocketServer发送过来的数据时
+        websocket.onmessage = function(evt) {
+        	var jsonStr = evt.data;
+        	var jsonObject = JSON.parse(jsonStr);
+        	var fromIp = jsonObject["fromIp"];
+        	if(fromIp == null || fromIp ==undefined)
+        	{
+        		fromIp="";
+        	}
+        	$("#text").append(fromIp+"&nbsp;&nbsp;"+ dateFtt("yyyy-MM-dd hh:mm:ss",new Date())+"\n"+"&nbsp;&nbsp;&nbsp;&nbsp;"+jsonObject["textBody"]+"\n");
+        };
+     
+	    //如果连接失败，发送、接收数据失败或者处理数据出现错误
+	    websocket.onerror = function(evt) {};
+	    
+	    //当Browser接收到WebSocketServer端发送的关闭连接请求时
+	    websocket.onclose = function(evt) {
+	    	alert("关闭连接");
+	    };
+    })
+   
+     $("#btn2").on("click",function(){
+     	var ip = $.trim($("#ipTo").val());
+     	if(/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/.test(ip))
+     	{
+     		var msg = $("#msg").val();
+	     	var o = {
+	     		toIp:ip,
+	     		textBody:msg
+	     	}
+	    	 websocket.send(JSON.stringify(o));
+	    	 $("#text").append("己方 : "+ dateFtt("yyyy-MM-dd hh:mm:ss",new Date())+"\n"+"&nbsp;&nbsp;&nbsp;&nbsp;"+msg+"\n");
+	    	$("#msg").val("");
+     	}else
+     	{
+     		alert("请输入规范的ip");
+     	}
+     })
+    
+      $("#btn3").on("click",function(){
+    	 websocket.close();
+     })
+     
+     
+    
+    
+    </script>  
+</head>  
+<body>  
+
+</body>  
+</html>  

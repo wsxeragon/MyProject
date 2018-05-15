@@ -1,0 +1,10 @@
+#set($page_title="自定义样式页面")  
+<div>   
+    <table >
+        #foreach($user in $List)
+            <tr >
+                <td >$user</td>
+            </tr>
+        #end
+    </table>
+</div>    
