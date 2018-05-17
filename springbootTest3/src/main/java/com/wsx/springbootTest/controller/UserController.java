@@ -69,7 +69,7 @@ public class UserController {
 		User user = userService.getUser(id);
 		Map<String, Object> map = new HashMap<>();
 		map.put("users", user);
-		map.put("port", 9091);
+		map.put("port", 9093);
 		return map;
 	}
 
@@ -117,8 +117,7 @@ public class UserController {
 	@ResponseBody
 	public Map<String, Object> test1() {
 		Map<String, Object> map = new HashMap<>();
-		map.put("port", 9091);
+		map.put("port", 9093);
 		return map;
 	}
-
 }

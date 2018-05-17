@@ -1,0 +1,16 @@
+spring: 
+  application: 
+    name: eureka-server
+    
+server: 
+  port: 9098
+
+#也可以省去下面对hostname的配置，在defaultZone处直接使用IP地址，但是需要配置eureka.instance.prefer-ip-address=true
+#eureka.instance.hostname=peer2
+#eureka.client.serviceUrl.defaultZone=http://localhost:1111/eureka/
+eureka: 
+  client:  
+    serviceUrl: 
+      defaultZone: http://localhost:9098/eureka/
+  instance: 
+    prefer-ip-address: true

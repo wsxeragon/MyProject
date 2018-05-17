@@ -1,0 +1,20 @@
+eureka: 
+  client: 
+    serviceUrl.defaultZone: http://localhost:9098/eureka/
+server:
+  port: 9002
+spring: 
+  sleuth: 
+    sampler:  
+      percentage: 1.0
+  application:
+    name: service-zuul
+    
+zuul:  
+  host:  
+    socket-timeout-millis: 10000  
+    connect-timeout-millis: 10000  
+  routes:
+    api:
+      path: /zuul/**
+      url:  http://localhost:9092/

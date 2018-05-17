@@ -1,0 +1,46 @@
+spring: 
+  application:
+    name: ribbon-consumer 
+#  zipkin: 
+#    base-url: http://localhost:9411 
+#  sleuth: 
+#    sampler:  
+#      percentage: 1.0    
+server: 
+  port: 9000
+eureka: 
+  client: 
+    serviceUrl.defaultZone: http://localhost:9098/eureka/
+
+ribbon: 
+  ReadTimeout: 10000 
+  ConnectTimeout: 10000 
+
+turbine:  
+  appConfig: hello-service,ribbon-consumer,feign-consumer,test-service  #turbine监控的服务，可以有多个
+  clusterNameExpression: new String("default")
+
+#忽略权限拦截 防止post 401
+management: 
+  security: 
+    enabled: false
+    
+#info 信息 用于/info请求返回
+info: 
+  app:  
+    name: spring-boot-ribbon
+    version:  v1.0.0
+# 开启远程关闭服务   post /shutdown 
+endpoints:  
+  shutdown: 
+    enabled:  true
+    
+    
+my-service: 
+  ribbon: 
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+    
+other-service: 
+  ribbon: 
+    listOfServers: http://localhot:9091,http://localhot:9091
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RoundRobinRule
