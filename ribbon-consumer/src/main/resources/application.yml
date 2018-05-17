@@ -39,7 +39,8 @@ endpoints:
 my-service: 
   ribbon: 
     NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
-    
+
+#无效    
 other-service: 
   ribbon: 
     listOfServers: http://localhot:9091,http://localhot:9091
