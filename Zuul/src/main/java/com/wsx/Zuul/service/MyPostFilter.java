@@ -11,7 +11,7 @@ public class MyPostFilter extends ZuulFilter {
 	@Override
 	public Object run() {
 		RequestContext requestContext = RequestContext.getCurrentContext();
-
+		// requestContext.setResponseBody("{\"result\":\"CCCCCC\"}");
 		if ((boolean) requestContext.get("isSuccess")) {
 			requestContext.setResponseStatusCode(200);
 			// 设置返回值

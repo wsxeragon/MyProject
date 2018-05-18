@@ -16,8 +16,9 @@ public class MyPasswordFilter extends ZuulFilter {
 		RequestContext requestContext = RequestContext.getCurrentContext();
 		HttpServletRequest request = requestContext.getRequest();
 		System.out.println("MyUPasswordFilter");
-		String username = request.getParameter("password");
-		if (username != null && username.equals("123456")) {
+		String password = request.getParameter("password");
+		// requestContext.setResponseBody("{\"result\":\"BBBBBB\"}");
+		if (password != null && password.equals("123456")) {
 			requestContext.setSendZuulResponse(true);// 是否进行路由
 			requestContext.setResponseStatusCode(200);
 			requestContext.set("isSuccess", true);

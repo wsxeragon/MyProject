@@ -17,6 +17,9 @@ public class MyUsernameFilter extends ZuulFilter {
 		HttpServletRequest request = requestContext.getRequest();
 		System.out.println("MyUsernameFilter");
 		String username = request.getParameter("username");
+		// 此方法一旦被执行，不论是否进行路由，都会覆盖掉正常的返回值
+		// 此方法再后置filter中再次覆盖
+		// requestContext.setResponseBody("{\"result\":\"AAAAA\"}");
 		if (username != null && username.equals("admin")) {
 			requestContext.setSendZuulResponse(true);// 是否进行路由
 			requestContext.setResponseStatusCode(200);
@@ -33,6 +36,7 @@ public class MyUsernameFilter extends ZuulFilter {
 	@Override
 	public boolean shouldFilter() {
 		// TODO Auto-generated method stub
+		// 是否开启本次filter，不影响后续filter
 		return true;
 	}
 
