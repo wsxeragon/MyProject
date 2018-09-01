@@ -21,35 +21,35 @@ import com.wsx.springbootTest.domain.MyUserDetails;
 
 @Service
 public class MyLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
-	@Autowired
-	private SessionRegistry sessionRegistry;
-	@Autowired
-	private RedisTemplate redisTemplate;
+    @Autowired
+    private SessionRegistry sessionRegistry;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
-	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-			Authentication authentication) throws IOException, ServletException {
-		System.out.println(authentication.getName() + "登陆成功");
-		ValueOperations<String, Long> operations = redisTemplate.opsForValue();
-		operations.set(authentication.getName(), new Date().getTime());
-		super.onAuthenticationSuccess(request, response, authentication);
-	}
+    @Override
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+            Authentication authentication) throws IOException, ServletException {
+        System.out.println(authentication.getName() + "登陆成功");
+        ValueOperations<String, Long> operations = redisTemplate.opsForValue();
+        operations.set(authentication.getName(), new Date().getTime());
+        super.onAuthenticationSuccess(request, response, authentication);
+    }
 
-	private void invalidateSession(String username) {
-		List<Object> o = sessionRegistry.getAllPrincipals();
-		for (Object principal : o) {
-			if (principal instanceof MyUserDetails) {
-				final MyUserDetails loggedUser = (MyUserDetails) principal;
-				if (username.equals(loggedUser.getUsername())) {
-					List<SessionInformation> sessionsInfo = sessionRegistry.getAllSessions(principal, false);
-					if (null != sessionsInfo && sessionsInfo.size() > 0) {
-						for (SessionInformation sessionInformation : sessionsInfo) {
-							sessionInformation.expireNow();
-						}
-					}
-				}
-			}
-		}
-	}
+    private void invalidateSession(String username) {
+        List<Object> o = sessionRegistry.getAllPrincipals();
+        for (Object principal : o) {
+            if (principal instanceof MyUserDetails) {
+                final MyUserDetails loggedUser = (MyUserDetails) principal;
+                if (username.equals(loggedUser.getUsername())) {
+                    List<SessionInformation> sessionsInfo = sessionRegistry.getAllSessions(principal, false);
+                    if (null != sessionsInfo && sessionsInfo.size() > 0) {
+                        for (SessionInformation sessionInformation : sessionsInfo) {
+                            sessionInformation.expireNow();
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 }

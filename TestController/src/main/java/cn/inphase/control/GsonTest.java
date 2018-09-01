@@ -48,7 +48,6 @@ public class GsonTest {
         cus = new Gson().fromJson(json, new TypeToken<User>() {
         }.getType());
         System.out.println(cus);
-
         // 导出null值
         User user1 = new User("001", null, 19, new Date());
         Gson g0 = new Gson();
