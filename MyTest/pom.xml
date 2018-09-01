@@ -27,7 +27,7 @@
 	    <artifactId>jedis</artifactId>
 	    <version>2.9.0</version>
 	</dependency>
-  
+	
   
  <!--velocity start-->  
 <dependency>  
@@ -129,11 +129,8 @@
 			<version>${mybatisspring.version}</version>
 		</dependency>
 		<!-- mybaitsi end -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.34</version>
-		</dependency>
+		
+		       
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -211,7 +208,6 @@
         </dependency>
         <!-- log end -->
 
-		
 		<dependency>
     <groupId>com.google.code.gson</groupId>
     <artifactId>gson</artifactId>
@@ -222,14 +218,9 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.29</version>
+			<version>8.0.12</version>
 		</dependency>
 		
-		<dependency>
-			<groupId>com.itv</groupId>
-		  <artifactId>tool</artifactId>
-		  <version>0.0.1-SNAPSHOT</version>
-	</dependency>
 			<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
 		<dependency>
 		    <groupId>org.jsoup</groupId>
@@ -268,6 +259,13 @@
 	    <artifactId>hessian</artifactId>
 	    <version>4.0.51</version>
 	</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
+<dependency>
+    <groupId>io.netty</groupId>
+    <artifactId>netty-all</artifactId>
+    <version>4.1.26.Final</version>
+</dependency>
 	
 	
 		<!-- https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxjava -->
